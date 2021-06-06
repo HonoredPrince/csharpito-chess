@@ -1,0 +1,1 @@
+-Basic chess game with all the features avaliable, developed in C# for learning purposes
