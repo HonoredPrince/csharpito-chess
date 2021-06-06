@@ -1,1 +1,6 @@
--Basic chess game with all the features avaliable, developed in C# for learning purposes
+#Simples complete chess game on console, developed in C# for learning purposes
+
+##Code Layers 
+1. Application Layer
+2. Game Logic Layer
+3. Board Layer
