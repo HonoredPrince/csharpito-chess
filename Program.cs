@@ -1,5 +1,6 @@
 ﻿using System;
 using ChessBoard;
+using ChessBoard.Formater;
 using ChessBoard.Exceptions;
 using Pieces;
 
@@ -14,15 +15,13 @@ namespace ChessGame
             
                 board.PutPiece(new Tower(Color.Black, board), new Position(0, 0));
                 board.PutPiece(new Tower(Color.Black, board), new Position(1, 3));
-                board.PutPiece(new King(Color.Black, board), new Position(2, 4));
-                board.PutPiece(new King(Color.Black, board), new Position(-1, 0));
+                board.PutPiece(new King(Color.White, board), new Position(2, 4));
 
                 ScreenRenderer.RenderBoard(board);
 
             }catch(BoardException e){
                 System.Console.WriteLine(e.Message);
             }
-            Console.ReadLine();
         }
     }
 }
