@@ -1,6 +1,6 @@
-# Simples chess game developed in C# for playing on the command line
+# Simple chess game developed in C# for playing on the command line
 ---
--_Project was made for learning purposes_
+- _Project was made for learning purposes_
 
 ## Application Layers Structure
 1. Application Layer --> Console/Command Line
