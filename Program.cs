@@ -19,6 +19,13 @@ namespace ChessGame
                     System.Console.WriteLine();
                     System.Console.Write("Origin: ");
                     Position origin = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
+
+                    bool[,] possibleMovesForSelectedPiece = gameMatch.Board.GetPiece(origin).PossibleMoviments();
+
+                    Console.Clear();
+                    ScreenRenderer.RenderBoard(gameMatch.Board, possibleMovesForSelectedPiece);
+
+                    System.Console.WriteLine();
                     System.Console.Write("Destination: ");
                     Position destination = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
 

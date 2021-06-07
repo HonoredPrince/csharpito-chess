@@ -1,5 +1,5 @@
 namespace ChessBoard{
-    class Piece{
+    abstract class Piece{
         public Color Color { get; protected set; }
         public Position Position { get; set; }
         public Board Board { get; protected set; } 
@@ -15,5 +15,7 @@ namespace ChessBoard{
         public void IncrementAmountOfMoves(){
             AmountOfMoves++;
         }
+
+        public abstract bool[,] PossibleMoviments();
     }
 }
