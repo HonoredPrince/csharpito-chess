@@ -1,5 +1,6 @@
 using ChessBoard;
 using System;
+using ChessBoard.Enums;
 
 namespace View{
     class ScreenRenderer{

@@ -2,6 +2,7 @@ using ChessBoard;
 using Pieces;
 using ChessBoard.Formater;
 using ChessBoard.Exceptions;
+using ChessBoard.Enums;
 
 namespace Match{
     class ChessMatch{

@@ -1,3 +1,5 @@
+using ChessBoard.Enums;
+
 namespace ChessBoard{
     abstract class Piece{
         public Color Color { get; protected set; }

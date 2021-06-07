@@ -1,4 +1,5 @@
 using ChessBoard;
+using ChessBoard.Enums;
 
 namespace Pieces{
     class King : Piece{
