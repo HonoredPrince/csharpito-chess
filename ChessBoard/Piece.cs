@@ -5,9 +5,9 @@ namespace ChessBoard{
         public Board Board { get; protected set; } 
         public int AmountOfMoves { get; protected set; }
 
-        public Piece(Color color, Position position, Board board){
+        public Piece(Color color, Board board){
             Color = color;
-            Position = position;
+            Position = null;
             Board = board;
             AmountOfMoves = 0; 
         } 
