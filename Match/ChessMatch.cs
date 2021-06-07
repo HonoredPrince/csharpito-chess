@@ -3,9 +3,12 @@ using Pieces;
 using ChessBoard.Formater;
 using ChessBoard.Exceptions;
 using ChessBoard.Enums;
+using System.Collections.Generic;
 
 namespace Match{
     class ChessMatch{
+        private HashSet<Piece> _piecesOnBoard;
+        private HashSet<Piece> _capturedPieces;
         public Color CurrentColorPlayer { get; private set; }
         public int Turn { get; private set; }
         public Board Board { get; private set; }
@@ -14,6 +17,8 @@ namespace Match{
             Board = new Board(8, 8);
             Turn = 1;
             CurrentColorPlayer = Color.White;
+            _piecesOnBoard = new HashSet<Piece>();
+            _capturedPieces = new HashSet<Piece>();
             InsertPiecesOnBoard();
             IsMatchOver = false;
         }
@@ -23,6 +28,9 @@ namespace Match{
             movingPiece.IncrementAmountOfMoves();
             Piece capturedPiece = Board.RemovePiece(destination);
             Board.PutPiece(movingPiece, destination);
+            if(capturedPiece != null){
+                _capturedPieces.Add(capturedPiece);
+            }
         }
 
         public void StartTurn(Position origin, Position destination){
@@ -57,16 +65,43 @@ namespace Match{
             }
         }
 
+        public HashSet<Piece> GetCapturedPiecesByColorType(Color color){
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach(Piece capturedPiece in _capturedPieces){
+                if(capturedPiece.Color == color){
+                    aux.Add(capturedPiece);
+                }
+            }
+            return aux;
+        }
+
+        public HashSet<Piece> GetCurrentPiecesOnBoardByColor(Color color){
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach(Piece pieceOnBoard in _piecesOnBoard){
+                if(pieceOnBoard.Color == color){
+                    aux.Add(pieceOnBoard);
+                }
+            }
+            aux.ExceptWith(GetCapturedPiecesByColorType(color));
+            return aux;
+        }
+
+        public void PutNewPiece(char column, int line, Piece piece){
+            Board.PutPiece(piece, new BoardPosition(column, line).ToNumberFormatPosition());
+            _piecesOnBoard.Add(piece);
+        }
+
         private void InsertPiecesOnBoard(){
             //Whites
-            Board.PutPiece(new Tower(Color.White, Board), new BoardPosition('a', 1).ToNumberFormatPosition());
-            Board.PutPiece(new Tower(Color.White, Board), new BoardPosition('h', 1).ToNumberFormatPosition());
-            Board.PutPiece(new King(Color.White, Board), new BoardPosition('e', 1).ToNumberFormatPosition());
+            PutNewPiece('a', 1, new Tower(Color.White, Board));
+            PutNewPiece('h', 1, new Tower(Color.White, Board));
+            PutNewPiece('e', 1, new King(Color.White, Board));
+
             
             //Blacks
-            Board.PutPiece(new Tower(Color.Black, Board), new BoardPosition('a', 8).ToNumberFormatPosition());
-            Board.PutPiece(new Tower(Color.Black, Board), new BoardPosition('h', 8).ToNumberFormatPosition());
-            Board.PutPiece(new King(Color.Black, Board), new BoardPosition('e', 8).ToNumberFormatPosition());
+            PutNewPiece('a', 8, new Tower(Color.Black, Board));
+            PutNewPiece('h', 8, new Tower(Color.Black, Board));
+            PutNewPiece('e', 8, new King(Color.Black, Board));
         }
     }
 }

@@ -15,10 +15,7 @@ namespace ChessGame
                 while(!gameMatch.IsMatchOver){
                     try{
                         Console.Clear();
-                        ScreenRenderer.RenderBoard(gameMatch.Board);
-                        System.Console.WriteLine();
-                        System.Console.WriteLine("Turn:" + gameMatch.Turn);
-                        System.Console.WriteLine($"Waiting play from: {gameMatch.CurrentColorPlayer}");
+                        ScreenRenderer.RenderGameMatch(gameMatch);
 
                         System.Console.WriteLine();
                         System.Console.Write("Origin: ");
