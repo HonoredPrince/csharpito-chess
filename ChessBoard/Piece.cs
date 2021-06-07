@@ -12,8 +12,29 @@ namespace ChessBoard{
             AmountOfMoves = 0; 
         } 
 
+        protected bool CanMoveToPosition(Position position){
+            Piece piece = Board.GetPiece(position);
+            return piece == null || piece.Color != Color;
+        }
+
         public void IncrementAmountOfMoves(){
             AmountOfMoves++;
+        }
+
+        public bool IsAnyPossibleMovementAvaliable(){
+            bool [,] possibleMovementsMatrix = PossibleMoviments();
+            for(int i = 0; i < Board.Lines; i++){
+                for(int j = 0; j < Board.Columns; j++){
+                    if(possibleMovementsMatrix[i,j]){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool IsPositionAllowedByPieceMovementRestriction(Position position){
+            return PossibleMoviments()[position.Line, position.Column];
         }
 
         public abstract bool[,] PossibleMoviments();

@@ -1,5 +1,5 @@
 ﻿using System;
-using GameLogic;
+using Match;
 using ChessBoard;
 using ChessBoard.Exceptions;
 using View;
@@ -13,27 +13,40 @@ namespace ChessGame
             try{
                 ChessMatch gameMatch = new ChessMatch();
                 while(!gameMatch.IsMatchOver){
-                    Console.Clear();
-                    ScreenRenderer.RenderBoard(gameMatch.Board);
+                    try{
+                        Console.Clear();
+                        ScreenRenderer.RenderBoard(gameMatch.Board);
+                        System.Console.WriteLine();
+                        System.Console.WriteLine("Turn:" + gameMatch.Turn);
+                        System.Console.WriteLine($"Waiting play from: {gameMatch.CurrentColorPlayer}");
 
-                    System.Console.WriteLine();
-                    System.Console.Write("Origin: ");
-                    Position origin = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
+                        System.Console.WriteLine();
+                        System.Console.Write("Origin: ");
+                        Position origin = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
+                        gameMatch.OriginPositionValidation(origin);
 
-                    bool[,] possibleMovesForSelectedPiece = gameMatch.Board.GetPiece(origin).PossibleMoviments();
+                        bool[,] possibleMovesForSelectedPiece = gameMatch.Board.GetPiece(origin).PossibleMoviments();
 
-                    Console.Clear();
-                    ScreenRenderer.RenderBoard(gameMatch.Board, possibleMovesForSelectedPiece);
+                        Console.Clear();
+                        ScreenRenderer.RenderBoard(gameMatch.Board, possibleMovesForSelectedPiece);
 
-                    System.Console.WriteLine();
-                    System.Console.Write("Destination: ");
-                    Position destination = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
+                        System.Console.WriteLine();
+                        System.Console.Write("Destination: ");
+                        Position destination = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
+                        gameMatch.DestinationPositionValidation(origin, destination);
 
-                    gameMatch.ExecutePieceMovement(origin, destination);
+                        gameMatch.StartTurn(origin, destination);
+                    }
+                    catch (BoardException e){
+                        System.Console.WriteLine(e.Message);
+                        Console.ReadLine();
+                    }
                 }
-            }catch(BoardException e){
+            }
+            catch(BoardException e){
                 System.Console.WriteLine(e.Message);
             }
+            Console.ReadLine();
         }
     }
 }

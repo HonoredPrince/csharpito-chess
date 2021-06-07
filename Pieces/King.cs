@@ -5,12 +5,7 @@ namespace Pieces{
         public King(Color color, Board board) : base(color, board){
 
         }
-        
-        private bool CanMoveToPosition(Position position){
-            Piece piece = Board.GetPiece(position);
-            return piece == null || piece.Color != Color;
-        }
-
+    
         public override bool[,] PossibleMoviments(){
             bool [,] possibleMovimentsOnBoardMatrix = new bool[Board.Lines, Board.Columns];
 
