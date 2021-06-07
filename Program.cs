@@ -1,8 +1,8 @@
 ﻿using System;
+using GameLogic;
 using ChessBoard;
-using ChessBoard.Formater;
 using ChessBoard.Exceptions;
-using Pieces;
+using View;
 
 namespace ChessGame
 {
@@ -11,14 +11,19 @@ namespace ChessGame
         static void Main(string[] args)
         {
             try{
-                Board board = new Board(8, 8);
-            
-                board.PutPiece(new Tower(Color.Black, board), new Position(0, 0));
-                board.PutPiece(new Tower(Color.Black, board), new Position(1, 3));
-                board.PutPiece(new King(Color.White, board), new Position(2, 4));
+                ChessMatch gameMatch = new ChessMatch();
+                while(!gameMatch.IsMatchOver){
+                    Console.Clear();
+                    ScreenRenderer.RenderBoard(gameMatch.Board);
 
-                ScreenRenderer.RenderBoard(board);
+                    System.Console.WriteLine();
+                    System.Console.Write("Origin: ");
+                    Position origin = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
+                    System.Console.Write("Destination: ");
+                    Position destination = ScreenInput.ReadBoardPosition().ToNumberFormatPosition();
 
+                    gameMatch.ExecutePieceMovement(origin, destination);
+                }
             }catch(BoardException e){
                 System.Console.WriteLine(e.Message);
             }

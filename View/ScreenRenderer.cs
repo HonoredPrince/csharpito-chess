@@ -1,7 +1,7 @@
 using ChessBoard;
 using System;
 
-namespace ChessGame{
+namespace View{
     class ScreenRenderer{
         public static void RenderBoard(Board board){
             for(int i = 0; i < board.Lines; i++){

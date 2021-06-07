@@ -11,5 +11,9 @@ namespace ChessBoard{
             Board = board;
             AmountOfMoves = 0; 
         } 
+
+        public void IncrementAmountOfMoves(){
+            AmountOfMoves++;
+        }
     }
 }

@@ -33,6 +33,16 @@ namespace ChessBoard{
             piece.Position = position;
         }
 
+        public Piece RemovePiece(Position position){
+            if(GetPiece(position) == null){
+                return null;
+            }
+            Piece aux = GetPiece(position);
+            aux.Position = null;
+            _pieces[position.Line, position.Column] = null;
+            return aux;
+        }
+
         public bool IsPositionValid(Position position){
             if(position.Line < 0 || position.Line >= Lines || position.Column < 0 || position.Column >= Columns){
                 return false;
