@@ -39,6 +39,8 @@ namespace ChessGame
                         Console.ReadLine();
                     }
                 }
+                Console.Clear();
+                ScreenRenderer.RenderGameMatch(gameMatch);
             }
             catch(BoardException e){
                 System.Console.WriteLine(e.Message);

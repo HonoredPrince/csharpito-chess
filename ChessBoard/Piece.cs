@@ -23,6 +23,10 @@ namespace ChessBoard{
             AmountOfMoves++;
         }
 
+        public void DecrementAmountOfMoves(){
+            AmountOfMoves--;
+        }
+
         public bool IsAnyPossibleMovementAvaliable(){
             bool [,] possibleMovementsMatrix = PossibleMoviments();
             for(int i = 0; i < Board.Lines; i++){

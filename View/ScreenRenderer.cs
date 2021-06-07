@@ -47,7 +47,19 @@ namespace View{
 
             System.Console.WriteLine();
             System.Console.WriteLine("Turn:" + gameMatch.Turn);
-            System.Console.WriteLine($"Waiting play from: {gameMatch.CurrentColorPlayer}");
+
+            if(!gameMatch.IsMatchOver){
+                System.Console.WriteLine($"Waiting play from: {gameMatch.CurrentColorPlayer}");
+                if(gameMatch.IsMatchOnCheck){
+                    System.Console.WriteLine();
+                    System.Console.WriteLine($"Sir Player {gameMatch.CurrentColorPlayer}, your King is on CHECK, save him!");
+                }
+            }else{
+                System.Console.WriteLine();
+                System.Console.WriteLine("----CHECKMATE!----");
+                System.Console.WriteLine("Winner Winner Chicken Dinner!");
+                System.Console.WriteLine($"Congratulations Sir {gameMatch.CurrentColorPlayer} Player, you've Won");
+            }
         }
 
         public static void RenderCapturedPieces(ChessMatch gameMatch){

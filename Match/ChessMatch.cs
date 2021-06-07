@@ -13,6 +13,8 @@ namespace Match{
         public int Turn { get; private set; }
         public Board Board { get; private set; }
         public bool IsMatchOver { get; private set; }
+        public bool IsMatchOnCheck { get; private set; }
+
         public ChessMatch(){
             Board = new Board(8, 8);
             Turn = 1;
@@ -21,9 +23,10 @@ namespace Match{
             _capturedPieces = new HashSet<Piece>();
             InsertPiecesOnBoard();
             IsMatchOver = false;
+            IsMatchOnCheck = false;
         }
 
-        public void ExecutePieceMovement(Position origin, Position destination){
+        public Piece ExecutePieceMovement(Position origin, Position destination){
             Piece movingPiece = Board.RemovePiece(origin);
             movingPiece.IncrementAmountOfMoves();
             Piece capturedPiece = Board.RemovePiece(destination);
@@ -31,12 +34,38 @@ namespace Match{
             if(capturedPiece != null){
                 _capturedPieces.Add(capturedPiece);
             }
+            return capturedPiece;
+        }
+
+        public void UndoPieceMovement(Position origin, Position destination, Piece capturedPiece){
+            Piece piece = Board.RemovePiece(destination);
+            piece.DecrementAmountOfMoves();
+            if(capturedPiece != null){
+                Board.PutPiece(capturedPiece, destination);
+                _capturedPieces.Remove(capturedPiece);
+            }
+            Board.PutPiece(piece, origin);
         }
 
         public void StartTurn(Position origin, Position destination){
-            ExecutePieceMovement(origin, destination);
-            Turn++;
-            ChangeColorPlayer();
+            Piece capturedPiece = ExecutePieceMovement(origin, destination);
+            if(IsKingOnCheckByColor(CurrentColorPlayer)){
+                UndoPieceMovement(origin, destination, capturedPiece);
+                throw new BoardException("You wanna sacrifice your king dumbass?");
+            }
+
+            if(IsKingOnCheckByColor(GetAdversaryColor(CurrentColorPlayer))){
+                IsMatchOnCheck = true;
+            }else{
+                IsMatchOnCheck = false;
+            }
+
+            if(IsKingOnCheckMateByColor(GetAdversaryColor(CurrentColorPlayer))){
+                IsMatchOver = true;
+            }else{
+                Turn++;
+                ChangeColorPlayer();
+            }
         }
 
         public void OriginPositionValidation(Position position){
@@ -86,6 +115,23 @@ namespace Match{
             return aux;
         }
 
+        private Color GetAdversaryColor(Color color){
+            if(color == Color.White){
+                return Color.Black;
+            }else{
+                return Color.White;
+            }
+        }
+
+        private Piece GetKingByColor(Color color){
+            foreach(Piece piece in GetCurrentPiecesOnBoardByColor(color)){
+                if(piece is King){
+                    return piece;
+                }
+            }
+            return null;
+        }
+        
         public void PutNewPiece(char column, int line, Piece piece){
             Board.PutPiece(piece, new BoardPosition(column, line).ToNumberFormatPosition());
             _piecesOnBoard.Add(piece);
@@ -93,15 +139,54 @@ namespace Match{
 
         private void InsertPiecesOnBoard(){
             //Whites
-            PutNewPiece('a', 1, new Tower(Color.White, Board));
-            PutNewPiece('h', 1, new Tower(Color.White, Board));
-            PutNewPiece('e', 1, new King(Color.White, Board));
+            PutNewPiece('c', 1, new Tower(Color.White, Board));
+            PutNewPiece('h', 7, new Tower(Color.White, Board));
+            PutNewPiece('d', 1, new King(Color.White, Board));
 
             
             //Blacks
-            PutNewPiece('a', 8, new Tower(Color.Black, Board));
-            PutNewPiece('h', 8, new Tower(Color.Black, Board));
-            PutNewPiece('e', 8, new King(Color.Black, Board));
+            //PutNewPiece('a', 8, new Tower(Color.Black, Board));
+            PutNewPiece('b', 8, new Tower(Color.Black, Board));
+            PutNewPiece('a', 8, new King(Color.Black, Board));
+        }
+    
+        public bool IsKingOnCheckByColor(Color color){
+            Piece king = GetKingByColor(color);
+            if(king == null){
+                throw new BoardException("Game doesn't have a king of this color, where's the king man?");
+            }
+
+            foreach(Piece piece in GetCurrentPiecesOnBoardByColor(GetAdversaryColor(color))){
+                bool[,] possibleMoves = piece.PossibleMoviments();
+                if(possibleMoves[king.Position.Line, king.Position.Column]){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsKingOnCheckMateByColor(Color color){
+            if(!IsKingOnCheckByColor(color)){
+                return false;
+            }
+            foreach(Piece piece in GetCurrentPiecesOnBoardByColor(color)){
+                bool[,] possibleMovements = piece.PossibleMoviments();
+                for(int i = 0; i < Board.Lines; i++){
+                    for(int j = 0; j < Board.Columns; j++){
+                        if(possibleMovements[i,j]){
+                            Position origin = piece.Position;
+                            Position destination = new Position(i,j);
+                            Piece capturedPiece = ExecutePieceMovement(origin, destination);
+                            bool checkTest = IsKingOnCheckByColor(color);
+                            UndoPieceMovement(origin, destination, capturedPiece);
+                            if(!checkTest){
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
         }
     }
 }
