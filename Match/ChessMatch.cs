@@ -123,6 +123,20 @@ namespace Match{
                 throw new BoardException("You wanna sacrifice your king dumbass?");
             }
 
+            Piece movedPiece = Board.GetPiece(destination);
+
+            //Pawn's Special Play Promotion
+            if(movedPiece is Pawn){
+               if((movedPiece.Color == Color.White && destination.Line == 0) || (movedPiece.Color == Color.Black && destination.Line == 8)){
+                   movedPiece = Board.RemovePiece(destination);
+                   _piecesOnBoard.Remove(movedPiece);
+                   Piece pawnPromoted = new Queen(movedPiece.Color, Board);
+                   Board.PutPiece(pawnPromoted, destination);
+                   _piecesOnBoard.Add(pawnPromoted);
+               } 
+            }
+
+
             if(IsKingOnCheckByColor(GetAdversaryColor(CurrentColorPlayer))){
                 IsMatchOnCheck = true;
             }else{
@@ -137,7 +151,6 @@ namespace Match{
             }
 
             //Pawn's Special Play En Passant
-            Piece movedPiece = Board.GetPiece(destination);
             if(movedPiece is Pawn && (destination.Line == origin.Line - 2 || destination.Line == origin.Line + 2)){
                 PieceIsVulnerableToEnPassant = movedPiece;
             }else{
