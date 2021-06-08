@@ -34,17 +34,54 @@ namespace Match{
             if(capturedPiece != null){
                 _capturedPieces.Add(capturedPiece);
             }
+
+            //King's Small Roque
+            if(movingPiece is King && destination.Column == origin.Column + 2){
+                Position towerOrigin = new Position(origin.Line, origin.Column + 3);
+                Position towerDestination = new Position(origin.Line, origin.Column + 1);
+                Piece roqueTower = Board.RemovePiece(towerOrigin);
+                roqueTower.IncrementAmountOfMoves();
+                Board.PutPiece(roqueTower, towerDestination);
+            }
+
+            //King's Big Roque
+            if(movingPiece is King && destination.Column == origin.Column - 2){
+                Position towerOrigin = new Position(origin.Line, origin.Column - 4);
+                Position towerDestination = new Position(origin.Line, origin.Column - 1);
+                Piece roqueTower = Board.RemovePiece(towerOrigin);
+                roqueTower.IncrementAmountOfMoves();
+                Board.PutPiece(roqueTower, towerDestination);
+            }
+
             return capturedPiece;
         }
 
         public void UndoPieceMovement(Position origin, Position destination, Piece capturedPiece){
-            Piece piece = Board.RemovePiece(destination);
-            piece.DecrementAmountOfMoves();
+            Piece movingPiece = Board.RemovePiece(destination);
+            movingPiece.DecrementAmountOfMoves();
             if(capturedPiece != null){
                 Board.PutPiece(capturedPiece, destination);
                 _capturedPieces.Remove(capturedPiece);
             }
-            Board.PutPiece(piece, origin);
+            Board.PutPiece(movingPiece, origin);
+
+            //King's Small Roque
+            if(movingPiece is King && destination.Column == origin.Column + 2){
+                Position towerOrigin = new Position(origin.Line, origin.Column + 3);
+                Position towerDestination = new Position(origin.Line, origin.Column + 1);
+                Piece roqueTower = Board.RemovePiece(towerDestination);
+                roqueTower.DecrementAmountOfMoves();
+                Board.PutPiece(roqueTower, towerOrigin);
+            }
+
+            //King's Big Roque
+            if(movingPiece is King && destination.Column == origin.Column - 2){
+                Position towerOrigin = new Position(origin.Line, origin.Column - 4);
+                Position towerDestination = new Position(origin.Line, origin.Column - 1);
+                Piece roqueTower = Board.RemovePiece(towerDestination);
+                roqueTower.DecrementAmountOfMoves();
+                Board.PutPiece(roqueTower, towerOrigin);
+            }
         }
 
         public void StartTurn(Position origin, Position destination){
@@ -146,7 +183,7 @@ namespace Match{
             PutNewPiece('b', 1, new Horse(Color.White, Board));
             PutNewPiece('g', 1, new Horse(Color.White, Board));
             PutNewPiece('d', 1, new Queen(Color.White, Board));
-            PutNewPiece('e', 1, new King(Color.White, Board));
+            PutNewPiece('e', 1, new King(Color.White, Board, this));
             
             PutNewPiece('a', 2, new Pawn(Color.White, Board));
             PutNewPiece('b', 2, new Pawn(Color.White, Board));
@@ -166,7 +203,7 @@ namespace Match{
             PutNewPiece('b', 8, new Horse(Color.Black, Board));
             PutNewPiece('g', 8, new Horse(Color.Black, Board));
             PutNewPiece('d', 8, new Queen(Color.Black, Board));
-            PutNewPiece('e', 8, new King(Color.Black, Board));
+            PutNewPiece('e', 8, new King(Color.Black, Board, this));
 
             PutNewPiece('a', 7, new Pawn(Color.Black, Board));
             PutNewPiece('b', 7, new Pawn(Color.Black, Board));
