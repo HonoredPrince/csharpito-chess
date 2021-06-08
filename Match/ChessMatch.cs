@@ -14,13 +14,16 @@ namespace Match{
         public Board Board { get; private set; }
         public bool IsMatchOver { get; private set; }
         public bool IsMatchOnCheck { get; private set; }
+        public Piece PieceIsVulnerableToEnPassant { get; private set; }
 
         public ChessMatch(){
+            _piecesOnBoard = new HashSet<Piece>();
+            _capturedPieces = new HashSet<Piece>();
+            PieceIsVulnerableToEnPassant = null;
+            
             Board = new Board(8, 8);
             Turn = 1;
             CurrentColorPlayer = Color.White;
-            _piecesOnBoard = new HashSet<Piece>();
-            _capturedPieces = new HashSet<Piece>();
             InsertPiecesOnBoard();
             IsMatchOver = false;
             IsMatchOnCheck = false;
@@ -53,6 +56,20 @@ namespace Match{
                 Board.PutPiece(roqueTower, towerDestination);
             }
 
+            //Pawn En Passant
+            if(movingPiece is Pawn){
+                if(origin.Column != destination.Column && capturedPiece == null){
+                    Position pawnToCapture;
+                    if(movingPiece.Color == Color.White){
+                        pawnToCapture = new Position(destination.Line + 1, destination.Column);
+                    }else{
+                        pawnToCapture = new Position(destination.Line - 1, destination.Column);
+                    }
+                    capturedPiece = Board.RemovePiece(pawnToCapture);
+                    _capturedPieces.Add(capturedPiece);
+                }
+            }
+
             return capturedPiece;
         }
 
@@ -82,6 +99,21 @@ namespace Match{
                 roqueTower.DecrementAmountOfMoves();
                 Board.PutPiece(roqueTower, towerOrigin);
             }
+
+            //Pawn En Passant
+            if(movingPiece is Pawn){
+                if(origin.Column != destination.Column && capturedPiece == PieceIsVulnerableToEnPassant){
+                    Piece pawnToUncapture = Board.RemovePiece(destination);
+                    Position originalPosition;
+                    if(movingPiece.Color == Color.White){
+                        originalPosition = new Position(3, destination.Column);
+                    }else{
+                        originalPosition = new Position(4, destination.Column);
+                    }
+                    Board.PutPiece(pawnToUncapture, originalPosition);
+                    _capturedPieces.Add(capturedPiece);
+                }
+            }
         }
 
         public void StartTurn(Position origin, Position destination){
@@ -102,6 +134,14 @@ namespace Match{
             }else{
                 Turn++;
                 ChangeColorPlayer();
+            }
+
+            //Pawn's Special Play En Passant
+            Piece movedPiece = Board.GetPiece(destination);
+            if(movedPiece is Pawn && (destination.Line == origin.Line - 2 || destination.Line == origin.Line + 2)){
+                PieceIsVulnerableToEnPassant = movedPiece;
+            }else{
+                PieceIsVulnerableToEnPassant = null;
             }
         }
 
@@ -185,14 +225,14 @@ namespace Match{
             PutNewPiece('d', 1, new Queen(Color.White, Board));
             PutNewPiece('e', 1, new King(Color.White, Board, this));
             
-            PutNewPiece('a', 2, new Pawn(Color.White, Board));
-            PutNewPiece('b', 2, new Pawn(Color.White, Board));
-            PutNewPiece('c', 2, new Pawn(Color.White, Board));
-            PutNewPiece('d', 2, new Pawn(Color.White, Board));
-            PutNewPiece('e', 2, new Pawn(Color.White, Board));
-            PutNewPiece('f', 2, new Pawn(Color.White, Board));
-            PutNewPiece('g', 2, new Pawn(Color.White, Board));
-            PutNewPiece('h', 2, new Pawn(Color.White, Board));
+            PutNewPiece('a', 2, new Pawn(Color.White, Board, this));
+            PutNewPiece('b', 2, new Pawn(Color.White, Board, this));
+            PutNewPiece('c', 2, new Pawn(Color.White, Board, this));
+            PutNewPiece('d', 2, new Pawn(Color.White, Board, this));
+            PutNewPiece('e', 2, new Pawn(Color.White, Board, this));
+            PutNewPiece('f', 2, new Pawn(Color.White, Board, this));
+            PutNewPiece('g', 2, new Pawn(Color.White, Board, this));
+            PutNewPiece('h', 2, new Pawn(Color.White, Board, this));
 
             
             //Blacks
@@ -205,14 +245,14 @@ namespace Match{
             PutNewPiece('d', 8, new Queen(Color.Black, Board));
             PutNewPiece('e', 8, new King(Color.Black, Board, this));
 
-            PutNewPiece('a', 7, new Pawn(Color.Black, Board));
-            PutNewPiece('b', 7, new Pawn(Color.Black, Board));
-            PutNewPiece('c', 7, new Pawn(Color.Black, Board));
-            PutNewPiece('d', 7, new Pawn(Color.Black, Board));
-            PutNewPiece('e', 7, new Pawn(Color.Black, Board));
-            PutNewPiece('f', 7, new Pawn(Color.Black, Board));
-            PutNewPiece('g', 7, new Pawn(Color.Black, Board));
-            PutNewPiece('h', 7, new Pawn(Color.Black, Board));
+            PutNewPiece('a', 7, new Pawn(Color.Black, Board, this));
+            PutNewPiece('b', 7, new Pawn(Color.Black, Board, this));
+            PutNewPiece('c', 7, new Pawn(Color.Black, Board, this));
+            PutNewPiece('d', 7, new Pawn(Color.Black, Board, this));
+            PutNewPiece('e', 7, new Pawn(Color.Black, Board, this));
+            PutNewPiece('f', 7, new Pawn(Color.Black, Board, this));
+            PutNewPiece('g', 7, new Pawn(Color.Black, Board, this));
+            PutNewPiece('h', 7, new Pawn(Color.Black, Board, this));
         }
     
         public bool IsKingOnCheckByColor(Color color){

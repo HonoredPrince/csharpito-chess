@@ -1,10 +1,14 @@
 using ChessBoard;
 using ChessBoard.Enums;
+using Match;
 
 namespace Pieces{
     class Pawn : Piece{
-        public Pawn(Color color, Board board) : base(color, board){
+        
+        private ChessMatch _gameMatch;
 
+        public Pawn(Color color, Board board, ChessMatch gameMatch) : base(color, board){
+            _gameMatch = gameMatch;
         }
 
         private bool IsPositionFree(Position position){
@@ -38,6 +42,19 @@ namespace Pieces{
                 if (Board.IsPositionValid(position) && CanPawnMoveToPosition(position)) {
                     possibleMovimentsOnBoardMatrix[position.Line, position.Column] = true;
                 }
+
+                //En passant 
+                if(Position.Line == 3){
+                    Position leftPositionToPawn = new Position(Position.Line, Position.Column - 1);
+                    if(Board.IsPositionValid(leftPositionToPawn) && CanMoveToPosition(leftPositionToPawn) && Board.GetPiece(leftPositionToPawn) == _gameMatch.PieceIsVulnerableToEnPassant){
+                        possibleMovimentsOnBoardMatrix[leftPositionToPawn.Line - 1, leftPositionToPawn.Column] = true;
+                    }
+                    Position rightPositionToPawn = new Position(Position.Line, Position.Column + 1);
+                    if(Board.IsPositionValid(rightPositionToPawn) && CanMoveToPosition(rightPositionToPawn) && Board.GetPiece(rightPositionToPawn) == _gameMatch.PieceIsVulnerableToEnPassant){
+                        possibleMovimentsOnBoardMatrix[rightPositionToPawn.Line - 1, rightPositionToPawn.Column] = true;
+                    }
+                }
+
             }else{
                 position.SetPosition(Position.Line + 1, Position.Column);
                 if (Board.IsPositionValid(position) && IsPositionFree(position)) {
@@ -55,6 +72,18 @@ namespace Pieces{
                 position.SetPosition(Position.Line + 1, Position.Column + 1);
                 if (Board.IsPositionValid(position) && CanPawnMoveToPosition(position)) {
                     possibleMovimentsOnBoardMatrix[position.Line, position.Column] = true;
+                }
+
+                //En passant 
+                if(Position.Line == 4){
+                    Position leftPositionToPawn = new Position(Position.Line, Position.Column - 1);
+                    if(Board.IsPositionValid(leftPositionToPawn) && CanMoveToPosition(leftPositionToPawn) && Board.GetPiece(leftPositionToPawn) == _gameMatch.PieceIsVulnerableToEnPassant){
+                        possibleMovimentsOnBoardMatrix[leftPositionToPawn.Line + 1, leftPositionToPawn.Column] = true;
+                    }
+                    Position rightPositionToPawn = new Position(Position.Line, Position.Column + 1);
+                    if(Board.IsPositionValid(rightPositionToPawn) && CanMoveToPosition(rightPositionToPawn) && Board.GetPiece(rightPositionToPawn) == _gameMatch.PieceIsVulnerableToEnPassant){
+                        possibleMovimentsOnBoardMatrix[rightPositionToPawn.Line + 1, rightPositionToPawn.Column] = true;
+                    }
                 }
             }
 
