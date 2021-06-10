@@ -1,6 +1,6 @@
 # Simple chess game developed in C# for playing on the command line
 ---
-- _Project was made for learning purposes_
+- _Install dotnet SDK 5.0 and run "dotnet run" on the Program.cs directory to start the game_
 
 ## Application Layers Structure
 1. Application Layer --> Console/Command Line
